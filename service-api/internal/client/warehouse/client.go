@@ -6,18 +6,18 @@ import (
 	"service-api/internal/dto/request"
 )
 
-type WarehouseClient struct {
+type Client struct {
 	baseURL string
 	client  *http.Client
 }
 
-func New(baseURL string) *WarehouseClient {
-	return &WarehouseClient{
+func New(baseURL string) *Client {
+	return &Client{
 		baseURL: baseURL,
 		client:  &http.Client{},
 	}
 }
 
-func (w *WarehouseClient) CreateProduct(ctx context.Context, req request.CreateProductRequest) error {
+func (w *Client) CreateProduct(ctx context.Context, req request.CreateProductRequest) error {
 	return nil
 }
