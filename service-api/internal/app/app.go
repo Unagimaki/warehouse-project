@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"service-api/internal/client/warehouse"
 	"service-api/internal/config"
 	"service-api/internal/handler"
 	"time"
@@ -16,9 +17,13 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	warehouseClient := warehouse.New("http://localhost:8081")
+	productHandler := handler.New(warehouseClient)
 
 	mux := http.NewServeMux()
+
 	mux.HandleFunc("/health", handler.Health)
+	mux.HandleFunc("POST /products", productHandler.CreateProduct)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,

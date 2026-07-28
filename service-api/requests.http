@@ -1,0 +1,12 @@
+POST http://localhost:8080/products
+Content-Type: application/json
+
+{
+    "name": "Nivea Men Active Clean",
+    "brand": "Nivea",
+    "category": "Shampoo",
+    "gender": "Men",
+    "volumeMl": 500,
+    "description": "Shampoo with activated charcoal",
+    "barcode": "4005900123456"
+}
