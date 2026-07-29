@@ -3,8 +3,11 @@ package handler
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"log"
 	"net/http"
 	"service-api/internal/dto/request"
+	apperrors "service-api/internal/errors"
 )
 
 type ProductHandler struct {
@@ -29,7 +32,18 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err := h.warehouse.CreateProduct(r.Context(), req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+		var appErr *apperrors.AppError
+		if errors.As(err, &appErr) {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(appErr.StatusCode)
+			_ = json.NewEncoder(w).Encode(map[string]string{"code": appErr.Code, "message": appErr.Message})
+			return
+		}
+
+		log.Printf("create product failed: %v", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(map[string]string{"code": "internal_error", "message": "internal server error"})
 		return
 	}
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"service-werehouse/internal/dto/request"
+	apperrors "service-werehouse/internal/errors"
 )
 
 type ProductRepository interface {
@@ -18,5 +19,8 @@ func NewProductService(repo ProductRepository) *ProductService {
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req request.CreateProductRequest) error {
-	return s.repo.CreateProduct(ctx, req)
+	if err := s.repo.CreateProduct(ctx, req); err != nil {
+		return apperrors.Wrap("create product failed", err)
+	}
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"service-werehouse/internal/dto/request"
+	apperrors "service-werehouse/internal/errors"
 )
 
 type ProductRepository struct {
@@ -17,13 +18,20 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 
 func (r *ProductRepository) CreateProduct(ctx context.Context, req request.CreateProductRequest) error {
 	if r.db == nil {
-		return fmt.Errorf("database connection is not initialized")
+		return apperrors.NewInternalError("database connection is not initialized", fmt.Errorf("db is nil"))
 	}
 
 	query := `
-		INSERT INTO products (name, brand, category, gender, volume_ml, description, barcode)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
-	`
+		INSERT INTO products (
+			item_number,
+			brand,
+			type,
+			gender,
+			volume_ml,
+			description,
+			barcode
+		)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)	`
 
 	_, err := r.db.ExecContext(ctx, query,
 		req.ItemNumber,

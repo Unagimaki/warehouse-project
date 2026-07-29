@@ -24,7 +24,7 @@ func Run() error {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/health", handler.Health)
 
-	db, err := database.NewDB(database.DBConfig{
+	dbCfg := database.DBConfig{
 		Driver:   cfg.DB.Driver,
 		Host:     cfg.DB.Host,
 		Port:     cfg.DB.PortNum,
@@ -32,7 +32,13 @@ func Run() error {
 		Password: cfg.DB.Password,
 		DBName:   cfg.DB.DBName,
 		SSLMode:  cfg.DB.SSLMode,
-	})
+	}
+
+	if err := database.RunMigrations(dbCfg); err != nil {
+		return err
+	}
+
+	db, err := database.NewDB(dbCfg)
 	if err != nil {
 		return err
 	}
