@@ -24,10 +24,8 @@ type DBConfig struct {
 }
 
 func LoadConfig() (*Config, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
+	_ = godotenv.Load()
+
 	port := os.Getenv("HTTP_PORT")
 	if port == "" {
 		return nil, errors.New("[LoadConfig]: HTTP_PORT is not set")
