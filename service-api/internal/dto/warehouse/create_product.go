@@ -1,4 +1,4 @@
-package werehouse
+package warehouse
 
 type CreateProductRequest struct {
 	ItemNumber string      `json:"itemNumber"`
