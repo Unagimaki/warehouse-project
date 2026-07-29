@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    item_number VARCHAR(255) NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    brand VARCHAR(255) NOT NULL,
+    gender VARCHAR(100) NOT NULL,
+    volume_ml INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    barcode VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

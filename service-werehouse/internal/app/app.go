@@ -7,7 +7,11 @@ import (
 	"os"
 	"os/signal"
 	"service-werehouse/internal/config"
+	"service-werehouse/internal/database"
 	"service-werehouse/internal/handler"
+	"service-werehouse/internal/middleware"
+	"service-werehouse/internal/repository"
+	"service-werehouse/internal/service"
 	"time"
 )
 
@@ -18,12 +22,32 @@ func Run() error {
 	}
 
 	mux := http.NewServeMux()
-
 	mux.HandleFunc("/health", handler.Health)
+
+	db, err := database.NewDB(database.DBConfig{
+		Driver:   cfg.DB.Driver,
+		Host:     cfg.DB.Host,
+		Port:     cfg.DB.PortNum,
+		User:     cfg.DB.User,
+		Password: cfg.DB.Password,
+		DBName:   cfg.DB.DBName,
+		SSLMode:  cfg.DB.SSLMode,
+	})
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	repo := repository.NewProductRepository(db)
+	productService := service.NewProductService(repo)
+	productHandler := handler.NewProductHandler(productService)
+	mux.HandleFunc("/products", productHandler.CreateProduct)
+
+	muxhandler := middleware.LoggingMiddleware(mux)
 
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: mux,
+		Handler: muxhandler,
 	}
 	quit := make(chan os.Signal, 1)
 	errCh := make(chan error, 1)
