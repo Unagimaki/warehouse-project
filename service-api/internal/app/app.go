@@ -17,7 +17,7 @@ func Run() error {
 	if err != nil {
 		return err
 	}
-	warehouseClient := warehouse.New("http://localhost:9080")
+	warehouseClient := warehouse.New(cfg.WarehouseURL)
 	productHandler := handler.New(warehouseClient)
 
 	mux := http.NewServeMux()

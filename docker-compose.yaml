@@ -12,6 +12,10 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    command:
+      postgres
+      -c
+      wal_level=logical
   service-api:
     build:
       context: ./service-api
