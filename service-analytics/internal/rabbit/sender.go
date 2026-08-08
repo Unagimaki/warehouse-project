@@ -4,12 +4,12 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
-type Publisher struct {
+type Sender struct {
 	conn *amqp.Connection
 	ch   *amqp.Channel
 }
 
-func NewPublisher() (*Publisher, error) {
+func NewSender() (*Sender, error) {
 	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
 	if err != nil {
 		return nil, err
@@ -84,13 +84,13 @@ func NewPublisher() (*Publisher, error) {
 		return nil, err
 	}
 
-	return &Publisher{
+	return &Sender{
 		conn: conn,
 		ch:   ch,
 	}, nil
 }
 
-func (p *Publisher) Close() error {
+func (p *Sender) Close() error {
 	if err := p.ch.Close(); err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (p *Publisher) Close() error {
 	return p.conn.Close()
 }
 
-func (p *Publisher) Publish(routingKey string, body []byte) error {
+func (p *Sender) Send(routingKey string, body []byte) error {
 	err := p.ch.Publish(
 		"products",
 		routingKey,
