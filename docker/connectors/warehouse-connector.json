@@ -1,0 +1,25 @@
+{
+  "name": "warehouse-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "postgres",
+    "database.password": "postgres",
+    "database.dbname": "warehouse",
+
+    "topic.prefix": "warehouse",
+
+    "plugin.name": "pgoutput",
+
+    "slot.name": "warehouse_slot",
+    "publication.name": "warehouse_pub",
+
+    "table.include.list": "public.products",
+    
+    "key.converter.schemas.enable": "false",
+    "value.converter.schemas.enable": "false"
+
+  }
+}

@@ -120,8 +120,21 @@ services:
       context: ./service-analytics
     container_name: service-analytics
     depends_on:
-      - kafka
-      - rabbitmq
-      - opensearch
+      kafka:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+      opensearch:
+        condition: service_started
+      register-connector:
+        condition: service_completed_successfully
+  register-connector:
+    image: curlimages/curl:latest
+    container_name: register-connector
+    depends_on:
+      - connect
+    volumes:
+      - ./docker/connectors:/connectors
+    entrypoint: ["/bin/sh", "/connectors/register.sh"]
 volumes:
   postgres_data:
