@@ -7,6 +7,7 @@ import (
 
 	"github.com/segmentio/kafka-go"
 
+	"service-analytics/internal/domain"
 	"service-analytics/internal/rabbit"
 )
 
@@ -15,7 +16,9 @@ type Event struct {
 }
 
 type Payload struct {
-	Op string `json:"op"`
+	Before *domain.Product `json:"before"`
+	After  *domain.Product `json:"after"`
+	Op     string          `json:"op"`
 }
 
 func StartKafkaConsumer(reader *kafka.Reader, sender *rabbit.Sender) {
