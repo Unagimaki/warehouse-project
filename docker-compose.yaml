@@ -136,5 +136,12 @@ services:
     volumes:
       - ./docker/connectors:/connectors
     entrypoint: ["/bin/sh", "/connectors/register.sh"]
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+    - "9090:9090"
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
 volumes:
   postgres_data:
