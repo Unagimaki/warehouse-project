@@ -9,6 +9,7 @@ import (
 	"service-api/internal/client/warehouse"
 	"service-api/internal/config"
 	"service-api/internal/handler"
+	"service-api/internal/metrics"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -19,6 +20,7 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	metrics.Init()
 	warehouseClient := warehouse.New(cfg.WarehouseURL)
 	productHandler := handler.New(warehouseClient)
 
@@ -29,7 +31,7 @@ func Run() error {
 	mux.Handle("/metrics", promhttp.Handler())
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: mux,
+		Handler: metrics.Middleware(mux),
 	}
 	quit := make(chan os.Signal, 1)
 	errCh := make(chan error, 1)
