@@ -10,6 +10,7 @@ import (
 	"service-api/internal/config"
 	"service-api/internal/handler"
 	"service-api/internal/metrics"
+	"service-api/internal/middleware"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -29,9 +30,13 @@ func Run() error {
 	mux.HandleFunc("/health", handler.Health)
 	mux.HandleFunc("POST /products", productHandler.CreateProduct)
 	mux.Handle("/metrics", promhttp.Handler())
+
+	handler := metrics.Middleware(mux)
+	handler = middleware.Logging(handler)
+
 	server := &http.Server{
 		Addr:    ":" + cfg.Port,
-		Handler: metrics.Middleware(mux),
+		Handler: handler,
 	}
 	quit := make(chan os.Signal, 1)
 	errCh := make(chan error, 1)
