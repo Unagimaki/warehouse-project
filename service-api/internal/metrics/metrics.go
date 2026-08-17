@@ -11,6 +11,13 @@ var HTTPRequests = prometheus.NewCounter(
 	},
 )
 
+var HTTPRequestDuration = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name: "http_request_duration_seconds",
+		Help: "HTTP request duration in seconds",
+	},
+)
+
 func Init() {
-	prometheus.MustRegister(HTTPRequests)
+	prometheus.MustRegister(HTTPRequestDuration, HTTPRequests)
 }
