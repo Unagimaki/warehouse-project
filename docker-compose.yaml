@@ -148,5 +148,23 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+  loki:
+    container_name: loki
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+  alloy:
+    container_name: alloy
+    image: grafana/alloy:latest
+    ports:
+      - "12345:12345"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./alloy/config.alloy:/etc/alloy/config.alloy
+    command:
+      - "run"
+      - "--server.http.listen-addr=0.0.0.0:12345"
+      - "/etc/alloy/config.alloy"
 volumes:
   postgres_data:
